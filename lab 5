@@ -1,0 +1,156 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <cassert>
+
+using namespace std;
+
+// Гномья сортировка
+void gnomeSort(vector<int>& arr) {
+    int n = arr.size();
+    int index = 0;
+
+    while (index < n) {
+        if (index == 0) {
+            index++;
+        }
+        if (arr[index] >= arr[index - 1]) {
+            index++;
+        } else {
+            swap(arr[index], arr[index - 1]);
+            index--;
+        }
+    }
+}
+
+// Сортировка Шелла
+void shellSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int gap = n / 2; gap > 0; gap /= 2) {
+        for (int i = gap; i < n; i++) {
+            int temp = arr[i];
+            int j;
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+            arr[j] = temp;
+        }
+    }
+}
+
+// Сортировка подсчетом
+void countingSort(vector<int>& arr) {
+    if (arr.empty()) return;
+    int maxVal = *max_element(arr.begin(), arr.end());
+    vector<int> count(maxVal + 1, 0);
+    for (int num : arr) {
+        count[num]++;
+    }
+    int index = 0;
+    for (int i = 0; i <= maxVal; i++) {
+        while (count[i] > 0) {
+            arr[index++] = i;
+            count[i]--;
+        }
+    }
+}
+
+// Функция для вывода массива
+void printArray(const vector<int>& arr) {
+    for (int num : arr) {
+        cout << num << " ";
+    }
+    cout << endl;
+}
+
+// Генерация случайного массива
+vector<int> generateRandomArray(int size, int maxValue) {
+    vector<int> arr(size);
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(0, maxValue);
+    for (int i = 0; i < size; i++) {
+        arr[i] = dis(gen);
+    }
+    return arr;
+}
+
+// Тесты для гномьей сортировки
+void testGnomeSort() {
+    vector<int> arr = {34, 2, 10, 6, 7, 5};
+    gnomeSort(arr);
+    assert(arr == vector<int>({2, 5, 6, 7, 10, 34}));
+
+    arr = {1, 2, 3, 4, 5};
+    gnomeSort(arr);
+    assert(arr == vector<int>({1, 2, 3, 4, 5}));
+
+    arr = {5, 4, 3, 2, 1};
+    gnomeSort(arr);
+    assert(arr == vector<int>({1, 2, 3, 4, 5}));
+}
+
+// Тесты для сортировки Шелла
+void testShellSort() {
+    vector<int> arr = {34, 2, 10, 6, 7, 5};
+    shellSort(arr);
+    assert(arr == vector<int>({2, 5, 6, 7, 10, 34}));
+
+    arr = {1, 2, 3, 4, 5};
+    shellSort(arr);
+    assert(arr == vector<int>({1, 2, 3, 4, 5}));
+
+    arr = {5, 4, 3, 2, 1};
+    shellSort(arr);
+    assert(arr == vector<int>({1, 2, 3, 4, 5}));
+}
+
+// Тесты для сортировки подсчетом
+void testCountingSort() {
+    vector<int> arr = {4, 2, 2, 8, 3, 3, 1};
+    countingSort(arr);
+    assert(arr == vector<int>({1, 2, 2, 3, 3, 4, 8}));
+
+    arr = {1, 1, 1, 1, 1};
+    countingSort(arr);
+    assert(arr == vector<int>({1, 1, 1, 1, 1}));
+
+    arr = {5, 4, 3, 2, 1};
+    countingSort(arr);
+    assert(arr == vector<int>({1, 2, 3, 4, 5}));
+}
+
+// Основная функция
+int main() {
+    // Пример использования
+    vector<int> arr = generateRandomArray(10, 100);
+    cout << "Исходный массив: ";
+    printArray(arr);
+
+    gnomeSort(arr);
+    cout << "Отсортированный массив (Гномья сортировка): ";
+    printArray(arr);
+
+    arr = generateRandomArray(10, 100);
+    cout << "Исходный массив для сортировки Шелла: ";
+    printArray(arr);
+
+    shellSort(arr);
+    cout << "Отсортированный массив (Сортировка Шелла): ";
+    printArray(arr);
+
+    arr = generateRandomArray(10, 100);
+    cout << "Исходный массив для сортировки подсчетом: ";
+    printArray(arr);
+
+    countingSort(arr);
+    cout << "Отсортированный массив (Сортировка подсчетом): ";
+    printArray(arr);
+
+    // Запуск тестов
+    testGnomeSort();
+    testShellSort();
+    testCountingSort();
+    cout << "Все тесты пройдены!/" << endl;
+}
